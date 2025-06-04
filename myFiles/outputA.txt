@@ -1,0 +1,2 @@
+สวัสดีผู้เรียนเนื้อหา node.js เบื้องต้น (async) 
+ hello async
