@@ -1,3 +1,3 @@
 hello world 
  สวัสดีผู้เรียนเนื้อหา node.js เบื้องต้น 
- ข้อมูลนี้ถูกเขียนเมื่อ Wed Jun 04 2025 11:43:23 GMT+0700 (Indochina Time)
+ ข้อมูลนี้ถูกเขียนเมื่อ Thu Jun 05 2025 10:40:51 GMT+0700 (Indochina Time)
