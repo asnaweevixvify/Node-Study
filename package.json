@@ -18,6 +18,7 @@
   "homepage": "https://github.com/asnaweevixvify/Node-Study#readme",
   "description": "",
   "dependencies": {
+    "express": "^5.1.0",
     "nodemon": "^3.1.10"
   }
 }

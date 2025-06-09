@@ -16,58 +16,30 @@
 // หากต้องการ response หน้าเว็บ html ไปหาผู้ใช้ ต้องใช้ fs.readFile มาเพื่อโชว์หน้าเว็บ
 // __dirname คือการเข้าถึงโฟลเดอร์ด้านนอก คือโฟลเดอร์ที่เราทำงานอยู่ คือโฟลเดอร์ที่จัดเก็บไฟล์ index.js = NODEJS STUDY
 // module url ใช้แสดง url ตามที่ผู้ใช้ส่ง request มา
+// req.url ผลที่ได้จะเป็น path เต็ม ของ หน้าเว็บปัจจุบัน
+//pathname จะได้เป็น path ส่วนหน้าเท่านั้น ของ หน้าเว็บปัจจุบัน
+//url.parse() คือใช้ แยกข้อมูลใน URL ออกเป็นส่วน ๆ ผลที่ได้จะเป็น object
+//query.id จะได้เป็น id ที่ระบุใน path เช่น http://localhost:8080/product?id=1 แสดงว่า id=1
+// use เริ่มใช้งาน express app.use('/',(req,res)) path เริ่มต้นเป็น / หากไม่ระบุ
+// app.get((path,(req,res)))
+// get ทำงานตาม path ที่ระบุเมื่อ req ส่งเข้ามา
+// module path ใช้แทน fs
+// path.join(__dirname,'ชื่อไฟล์') ใช้ดึงหน้าเว็บหรือข้อมูลมา
+// res.sendFile(หน้าเว็บ)
+// res.status แจ้งสถานะเว็บ
+ // res.type("text/html") กำหนดรูปแบบเนื้อหา
+ // ใช้ class Router จัดการ routing
+ //  เรียกใช้งานโดย express.Router() 
+ // router.get('/',(req,res=>{}))
+ // ใข้งานโดย app.use(router)
 
-const http = require('http')
-const fs = require('fs')
-const url = require('url')
+const express = require('express')
+const app = express()
+const router = require('./Route/myRouter')
 
-console.log(__dirname); //D:\code\nodejs study
+app.use(router)
 
-
-const indexPage = fs.readFileSync(`${__dirname}/templates/index.html`,'utf-8')
-const productPage1 = fs.readFileSync(`${__dirname}/templates/product1.html`,'utf-8')
-const productPage2 = fs.readFileSync(`${__dirname}/templates/product2.html`,'utf-8')
-const productPage3 = fs.readFileSync(`${__dirname}/templates/product3.html`,'utf-8')
-
-const server =  http.createServer((req,res)=>{
-
-    // req.url ผลที่ได้จะเป็น path เต็ม ของ หน้าเว็บปัจจุบัน
-    const urlParse = url.parse(req.url,true) //url.parse() คือใช้ แยกข้อมูลใน URL ออกเป็นส่วน ๆ ผลที่ได้จะเป็น object
-    const pathname = urlParse.pathname
-    const query = urlParse.query
-
-    //pathname จะได้เป็น path ส่วนหน้าเท่านั้น ของ หน้าเว็บปัจจุบัน
-    //query.id จะได้เป็น id ที่ระบุใน path เช่น http://localhost:8080/product?id=1 แสดงว่า id=1
-
-    if(pathname === '/' || pathname === '/home'){   
-        res.write(indexPage)
-    }
-    else if(pathname === '/product'){
-        if(query.id === '1'){ 
-            res.write(productPage1)
-        }
-        else if(query.id === '2'){
-            res.write(productPage2)
-        }
-        else if(query.id === '3'){
-            res.write(productPage3)
-        }
-        else{
-            res.writeHead(404)
-            res.write('not found')
-        }
-    }
-    else{
-        res.writeHead(404)
-        res.write('not found')
-    }
-    res.end()
-    // หรือ res.end(สิ่งที่จะเขียน) ก็ได้
-})
-
-server.listen(8080,"localhost",()=>{
-    console.log("start server in port 8080");
-})
+app.listen(8080,()=>{console.log("run server 8080");})
 
 // http status code
 // 200  ดำเนินการเสร็จสมบูรณ์
