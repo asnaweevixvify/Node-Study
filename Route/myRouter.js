@@ -11,9 +11,22 @@
 //else => <% }else{%>
 //lopp for =>  <%for(i=1,i<10,i++){%><%}%>
 //index in products ใน for loop หมายถึงนำค่า index ของ array products มาใช้ในการทำซ้ำ
+// ส่งค่าจาก form โดยใช้ method POST และกำหนด action เป็น ชื่อpathที่ต้องการ
+// กำหนด name ให้กับ input แต่ละตัว
+//รับค่าโดยการใช้ router.post('/pathที่ตั้งไว้',(req,res)=>{
+//req.body จะได้ข้อมูลจากฟอร์ม
+//เชื่อมmongodb
+//mongoose.connect('mongodb://hostname:port/database',{useNewUrlParser:true,useUnifiedTopology:true}).catch(err=>console.log(err)) หากไม่พบชื่อ database จะถูกสร้างให้อัตโนมัติ
+//การสร้าง schema (โครงสร้างการเก็บข้อมูล)
+//mongoose.Schema({field:type,field:type})
+//การสร้าง model  (ส่วนที่ใช้จัดการข้อมูล) มีลักษณะเป็น class ตั้งชื่อเป็นตัวแรกพิมใหญ่
+//mongoose.model('ชื่อcollection',schema)
+//เช่น let Product = mongoose.model("ชื่อcol,product")
+//module.exports = Product //export ออกไปใช้งาน
 
 const express = require('express')
 const router = express.Router()
+const Product = require('../models/products')
 
 router.get('/',(req,res)=>{
     const name = "asnawee" 
