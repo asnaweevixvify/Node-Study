@@ -23,32 +23,87 @@
 //mongoose.model('ชื่อcollection',schema)
 //เช่น let Product = mongoose.model("ชื่อcol,product")
 //module.exports = Product //export ออกไปใช้งาน
+// บันทึกข้อมูล let doc = new Product({field:name})
+// multer ใช้สำหรับอัพโหลดไฟล์
+//enctype="multipart/form-data" ใน form เป็นการตั้งค่าให้สามารถอัพโหลดไฟล์ได้
 
 const express = require('express')
 const router = express.Router()
+
 const Product = require('../models/products')
 
-router.get('/',(req,res)=>{
-    const name = "asnawee" 
-    const age = 14
-    const products = ["เสื้อ","พัดลม","หูฟัง","คีย์บอร์ด"]
-    const productsObj = [
-    {name:"laptop",price:22500,image:"images/products/product1.png"},
-    {name:"shirt",price:2000,image:"images/products/product2.png"},
-    {name:"earphone",price:30000,image:"images/products/product3.png"}] 
+// อัพโหลดไฟล์
+const multer = require('multer')
 
-    res.render('index.ejs',{name:name,age:age,products:products,productsObj:productsObj})
+const storage = multer.diskStorage({ //เก็บไฟล์ลงในเครื่อง
+    destination:function(req,file,cb){ //ตำแหน่งที่จะจัดเก็บไฟล์
+        cb(null,'./public/images/products')
+    },
+    filename:function(req,file,cb){ //ชื่อไฟล์
+        cb(null,Date.now()+".jpg") 
+    }
+})
+
+const upload = multer({
+    storage:storage
+})
+
+
+router.get('/',(req,res)=>{
+    Product.find().then((doc)=>{
+        res.render('index.ejs',{products:doc}) // ส่งข้อมูลไปแสดงผล
+    })
 })
 
 router.get('/addform',(req,res)=>{
     res.render('form.ejs')
 })
+
 router.get('/manage',(req,res)=>{
-    res.render('manage.ejs')
+    Product.find().then((doc)=>{
+        res.render('manage.ejs',{products:doc}) // ส่งข้อมูลไปแสดงผล
+    })
 })
-router.post('/insert',(req,res)=>{
+router.get('/:id',(req,res)=>{
+    const productId = req.params.id
+    Product.findOne({_id:productId}).then((doc)=>{ //หาสินค้าตัวที่ต้องการที่จะดู
+        res.render('product.ejs',{product:doc})
+    })
+})
+
+router.get('/delete/:id',(req,res)=>{
+    console.log(req.params.id); // ได้ id ที่ส่งมาจากหน้า manage รับผ่านพารามิเตอร์ :id
+    Product.findByIdAndDelete(req.params.id,{useFindAndModify:false}).exec(err=>{ // ลบข้อมูล
+        if(err){
+            console.log(err);
+        }
+        res.redirect('/manage')
+    })
+})
+
+router.post('/insert',upload.single("image"),(req,res)=>{
     console.log(req.body); // จะได้ object ที่เก็บข้อมูลจากฟอร์ม
-    res.render('form.ejs')
+
+    let data = new Product({
+        name:req.body.name,
+        price:req.body.price,
+        image:req.file.filename,
+        description:req.body.description
+    })
+    Product.saveProduct(data,(err)=>{ //ส่งข้อมูลไปทำงานในโมดูล saveproduct
+        if(err){
+            console.log(err);
+        }
+        res.redirect('/')
+    })
 })
+
+router.post('/edit',(req,res)=>{
+    const edit_id = req.body.product_id
+    Product.findOne({_id:edit_id}).then((doc)=>{
+        res.render('edit.ejs',{product:doc}) // นำข้อมูลเดิมที่ต้องการแก้ไขไปแสดงในแบบฟอร์ม
+    })
+})
+
 
 module.exports = router
