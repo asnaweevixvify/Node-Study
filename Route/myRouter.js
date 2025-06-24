@@ -56,13 +56,29 @@ router.get('/',(req,res)=>{
 })
 
 router.get('/addform',(req,res)=>{
-    res.render('form.ejs')
+    if(req.session.login){ //อ่านค่าใน session ชื่อ login
+        res.render('form')
+    }
+    else{
+        res.render('admin')
+    }
 })
 
 router.get('/manage',(req,res)=>{
-    Product.find().then((doc)=>{
-        res.render('manage.ejs',{products:doc}) // ส่งข้อมูลไปแสดงผล
-    })
+    if(req.session.login){
+        Product.find().then((doc)=>{
+            res.render('manage.ejs',{products:doc}) // ส่งข้อมูลไปแสดงผล
+        })
+    }
+    else{
+        res.render('admin')
+    }
+})
+router.get('/logout',(req,res)=>{ // ออกจากระบบ
+    res.clearCookie('username')
+    res.clearCookie('password')
+    res.clearCookie('login')
+    res.redirect('/manage')
 })
 router.get('/:id',(req,res)=>{
     const productId = req.params.id
@@ -104,6 +120,38 @@ router.post('/edit',(req,res)=>{
         res.render('edit.ejs',{product:doc}) // นำข้อมูลเดิมที่ต้องการแก้ไขไปแสดงในแบบฟอร์ม
     })
 })
+
+router.post('/update',(req,res)=>{
+    //ข้อมูลใหม่ที่ส่งมาจากฟอร์มแก้ไข
+    const update_id = req.body.update_id
+    let data = {
+        name:req.body.name,
+        price:req.body.price,
+        description:req.body.description
+    }
+    Product.findByIdAndUpdate(update_id,data,{useFindAndModify:false}).then(()=>{ // แก้ไขและอัพเดตข้อมูล
+        res.redirect('/manage')
+    })  
+})
+
+router.post('/login',(req,res)=>{ //เข้าสู่ระบบ
+    const username = req.body.username
+    const password = req.body.password
+    const timeExpired = 20000 //20วินาที
+
+    if(username === 'admin' && password ==='123'){
+        // สร้าง session
+        req.session.username = username
+        req.session.password = password
+        req.session.login = true
+        req.session.cookie.maxAge = timeExpired
+        res.redirect('/manage')
+    }
+    else{
+        res.render('404.ejs')
+    }
+})
+
 
 
 module.exports = router

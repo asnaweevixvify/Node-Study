@@ -18,8 +18,10 @@
   "homepage": "https://github.com/asnaweevixvify/Node-Study#readme",
   "description": "",
   "dependencies": {
+    "cookie-parser": "^1.4.7",
     "ejs": "^3.1.10",
     "express": "^5.1.0",
+    "express-session": "^1.18.1",
     "mongoose": "^6.10.0",
     "multer": "^2.0.1",
     "nodemon": "^3.1.10"

@@ -50,10 +50,22 @@ const express = require('express')
 const path = require('path')
 const app = express()
 const router = require('./Route/myRouter')
+const cookieParser = require('cookie-parser')
+const session = require('express-session')
+
+app.get('/favicon.ico', (req, res) => res.status(204).end());
 
 app.set('views',path.join(__dirname,'views')) // ตั้งค่า views
 app.set('view engine','ejs') // ตั้งค่า template engine
 app.use(express.urlencoded({extended:false})) // ตั้งค่าเพื่อให้รับค่าจาก form ผ่าน post ได้
+
+app.use(cookieParser())
+
+app.use(session({
+    secret:'mysession',//กำหนด key ในการสร้าง id
+    resave:false,
+    saveUninitialized:false
+}))
 
 app.use(router)
 
